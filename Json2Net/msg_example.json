@@ -1,0 +1,10 @@
+{
+	"PackageName":
+	{
+		"ClassName":
+		{
+			"string":  "member_str",
+			"int16_t": "member_int16"
+		}
+	}
+}
