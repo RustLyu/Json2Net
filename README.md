@@ -18,13 +18,10 @@ Json2Net
 # Json:
 
 {
-	# NameSpace
 	"NameSpace_t":
 	{
-		# ClassName
 		"ClassName_t":
 		{
-			# member  type->FiledName
 			"string":  "member_str",
 			"int32": "member_int32"
 		},
@@ -45,6 +42,11 @@ Json2Net
 # C#：
 namespace NameSpace_t
 {
+	using System;
+    using System.IO;
+    using System.Linq;
+    using System.Collections;
+    using System.Collections.Generic;
     public partial class ClassName_t
     {
         public string member_str
