@@ -4,7 +4,7 @@
 		"ClassName":
 		{
 			"string":  "member_str",
-			"int16_t": "member_int16"
+			"int16": "member_int16"
 		}
 	}
 }
