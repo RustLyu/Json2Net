@@ -9,6 +9,9 @@ namespace Json2Net
 {
 	public class Program
 	{
+		/// <summary>
+		/// 3层 Dictionary namespace => class => member
+		/// </summary>
 		private static Dictionary<string, Dictionary<string, Dictionary<string, string>>> classValue = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 		static void Main(string[] args)
 		{
@@ -130,9 +133,9 @@ namespace Json2Net
 
 					if (searchOption != null)
 					{
-						inputFiles.Clear();
+						//inputFiles.Clear();
 						var searchRoot = importPaths[0];
-						foreach (var path in Directory.EnumerateFiles(importPaths[0], "*.json", searchOption.Value))
+						foreach (var path in Directory.EnumerateFiles(importPaths[0], inputFiles[0], searchOption.Value))
 						{
 							filesPath.Add(path);
 						}
@@ -144,20 +147,20 @@ namespace Json2Net
 				string text = File.ReadAllText(path);
 				var fileName = "\\" + path.Split('\\').Last().Split('.').First() +".cs";
 				DynamicJsonObject dy = ConvertJson(text);
-				foreach (var d in dy.Dictionary)
+				foreach (var ns in dy.Dictionary)
 				{
 					// namespace
-					classValue.Add(d.Key, new Dictionary<string, Dictionary<string, string>>());
+					classValue.Add(ns.Key, new Dictionary<string, Dictionary<string, string>>());
 					// class
-					var q = d.Value as Dictionary<string, object>;
+					var q = ns.Value as Dictionary<string, object>;
 					foreach (var cl in q)
 					{
-						classValue[d.Key].Add(cl.Key, new Dictionary<string, string>());
+						classValue[ns.Key].Add(cl.Key, new Dictionary<string, string>());
 						var mem = cl.Value as Dictionary<string, object>;
 						// member
 						foreach (var m in mem)
 						{
-							classValue[d.Key][cl.Key].Add(m.Key, m.Value.ToString());
+							classValue[ns.Key][cl.Key].Add(m.Key, m.Value.ToString());
 						}
 					}
 				}
