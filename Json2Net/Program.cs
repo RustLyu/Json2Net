@@ -9,7 +9,7 @@ namespace Json2Net
 {
 	public class Program
 	{
-		public static Dictionary<string, Dictionary<string, Dictionary<string, string>>> classValue = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+		private static Dictionary<string, Dictionary<string, Dictionary<string, string>>> classValue = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 		static void Main(string[] args)
 		{
 			string outPath = null; // -o{FILE}, --descriptor_set_out={FILE}

@@ -11,7 +11,6 @@ namespace Json2Net
 	/// </summary>
 	class CodeGenerate
 	{
-		//private readonly string NamespaceName = "Table";
 		private static readonly string codeLanguage = "CSharp";
 		public static void CSharpCode(string pathName, Dictionary<string, Dictionary<string, Dictionary<string, string>>> code)
 		{
@@ -58,14 +57,17 @@ namespace Json2Net
 
 		private static void SetMemberType(CodeMemberProperty property, string typeName)
 		{
-			typeName = typeName.ToLower().Trim(' ');
+			//typeName = typeName.ToLower().Trim(' ');
 			switch (typeName)
 			{
+				case "String":
 				case "string":
 					property.Type = new CodeTypeReference(typeof(string));
 					break;
 				case "int16":
+				case "int16_t":
 				case "int32":
+				case "int32_t":
 					property.Type = new CodeTypeReference(typeof(int));
 					break;
 				case "int64":
@@ -80,10 +82,10 @@ namespace Json2Net
 				case "float":
 					property.Type = new CodeTypeReference(typeof(float));
 					break;
-				case "array":
-					break;
 				default:
-					throw new Exception(string.Format("Not Impletion of Type：{0}", typeName));
+					property.Type = new CodeTypeReference(typeName);
+					break;
+					//throw new Exception(string.Format("Not Impletion of Type：{0}", typeName));
 			}
 		}
 	}
