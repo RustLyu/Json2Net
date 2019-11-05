@@ -15,7 +15,7 @@ Json2Net
 
 # 参考格式如下:
 
-# json
+# Json:
 
 {
 	# NameSpace
@@ -45,12 +45,6 @@ Json2Net
 # C#：
 namespace NameSpace_t
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Collections;
-    using System.Collections.Generic;
-    
     public partial class ClassName_t
     {
         public string member_str
