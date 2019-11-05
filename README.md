@@ -42,11 +42,12 @@ Json2Net
 # C#：
 namespace NameSpace_t
 {
-	using System;
+    using System;
     using System.IO;
     using System.Linq;
     using System.Collections;
     using System.Collections.Generic;
+    
     public partial class ClassName_t
     {
         public string member_str
