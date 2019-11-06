@@ -145,31 +145,40 @@ namespace Json2Net
 			foreach (var path in filesPath)
 			{
 				string text = File.ReadAllText(path);
-				var fileName = "\\" + path.Split('\\').Last().Split('.').First() +".cs";
+				var fileName = "\\" + path.Split('\\').Last().Split('.').First() + ".cs";
 				DynamicJsonObject dy = ConvertJson(text);
 				foreach (var ns in dy.Dictionary)
 				{
 					// namespace
-					classValue.Add(ns.Key, new Dictionary<string, Dictionary<string, string>>());
+					if (!classValue.ContainsKey(ns.Key))
+						classValue.Add(ns.Key, new Dictionary<string, Dictionary<string, string>>());
+					else
+						throw new Exception(string.Format("namespace duplicate：{0}", ns.Key));
 					// class
 					var q = ns.Value as Dictionary<string, object>;
 					foreach (var cl in q)
 					{
-						classValue[ns.Key].Add(cl.Key, new Dictionary<string, string>());
+						if(!classValue[ns.Key].ContainsKey(cl.Key))
+							classValue[ns.Key].Add(cl.Key, new Dictionary<string, string>());
+						else
+							throw new Exception(string.Format("class duplicate：{0}", cl.Key));
 						var mem = cl.Value as Dictionary<string, object>;
 						// member
 						foreach (var m in mem)
 						{
-							classValue[ns.Key][cl.Key].Add(m.Key, m.Value.ToString());
+							if(!classValue[ns.Key][cl.Key].ContainsKey(m.Key))
+								classValue[ns.Key][cl.Key].Add(m.Key, m.Value.ToString());
+							else
+								throw new Exception(string.Format("member duplicate：{0}", m.Key));
 						}
 					}
 				}
 				CodeGenerate.CSharpCode(outPath + fileName, classValue);
-				Console.WriteLine("JsonConvert2Net " + path + " => "+ outPath + fileName + " Success" );
+				Console.WriteLine("JsonConvert2Net " + path + " => " + outPath + fileName + " Success");
 			}
 			Console.ReadKey();
-
 		}
+
 		static DynamicJsonObject ConvertJson(string json)
 		{
 			JavaScriptSerializer jss = new JavaScriptSerializer();
