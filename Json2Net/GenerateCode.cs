@@ -14,10 +14,11 @@ namespace Json2Net
 		private static readonly string codeLanguage = "CSharp";
 		public static void CSharpCode(string pathName, Dictionary<string, Dictionary<string, Dictionary<string, string>>> code)
 		{
-			foreach (var c in code)
+			// namespace
+			foreach (var ns in code)
 			{
 				var compileUnit = new CodeCompileUnit();
-				var nameSpace = new CodeNamespace(c.Key);
+				var nameSpace = new CodeNamespace(ns.Key);
 				compileUnit.Namespaces.Add(nameSpace);
 				nameSpace.Imports.Add(new CodeNamespaceImport("System"));
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.IO"));
@@ -25,23 +26,44 @@ namespace Json2Net
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.Collections"));
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.Collections.Generic"));
 				
-				foreach (var classN in c.Value)
+				// class
+				foreach (var cl in ns.Value)
 				{
-					var generateClass = new CodeTypeDeclaration(classN.Key);
-					generateClass.IsClass = true;
-					generateClass.IsPartial = true;
-
-					nameSpace.Types.Add(generateClass);
-					foreach (var m in classN.Value)
+					if (cl.Key.StartsWith("enum"))
 					{
-						var property = new CodeMemberProperty();
-						property.Name = m.Value;
-						SetMemberType(property, m.Key);
-						property.HasSet = true;
-						property.HasGet = true;
-						property.Attributes = MemberAttributes.Public;
-						property.Attributes = MemberAttributes.Final | MemberAttributes.Public;
-						generateClass.Members.Add(property);
+						var enumName = cl.Key.Split(' ');
+						if (enumName[0].Equals("enum"))
+						{
+							var generateEnum = new CodeTypeDeclaration(enumName[1]);
+							nameSpace.Types.Add(generateEnum);
+							generateEnum.IsEnum = true;
+							foreach (var mem in cl.Value)
+							{
+								CodeMemberField m1 = new CodeMemberField();
+								m1.Name = mem.Key;
+								m1.Attributes = MemberAttributes.Public;
+								generateEnum.Members.Add(m1);
+							}
+						}
+					}
+					else
+					{
+						var generateClass = new CodeTypeDeclaration(cl.Key);
+						generateClass.IsClass = true;
+						generateClass.IsPartial = true;
+
+						nameSpace.Types.Add(generateClass);
+						// member
+						foreach (var mem in cl.Value)
+						{
+							var property = new CodeMemberProperty();
+							property.Name = mem.Value;
+							SetMemberType(property, mem.Key);
+							property.HasSet = true;
+							property.HasGet = true;
+							property.Attributes = MemberAttributes.Final | MemberAttributes.Public;
+							generateClass.Members.Add(property);
+						}
 					}
 					CodeDomProvider provider = CodeDomProvider.CreateProvider(codeLanguage);
 					CodeGeneratorOptions options = new CodeGeneratorOptions();
