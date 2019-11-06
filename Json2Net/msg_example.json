@@ -1,10 +1,15 @@
 {
 	"PackageName":
 	{
-		"ClassName":
+		"enum EnumTestName":
+		{
+			"EnumTestName_None":  0,
+			"EnumTestName_Test": 1
+		},
+		"ClassName_t":
 		{
 			"string":  "member_str",
-			"int16": "member_int16"
+			"int32": "member_int32"
 		}
 	}
 }
