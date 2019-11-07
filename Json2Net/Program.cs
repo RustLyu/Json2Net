@@ -12,7 +12,7 @@ namespace Json2Net
 		/// <summary>
 		/// 3层 Dictionary namespace => class => member
 		/// </summary>
-		private static Dictionary<string, Dictionary<string, Dictionary<string, string>>> classValue = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+		// private static Dictionary<string, Dictionary<string, Dictionary<string, string>>> classValue = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 		static void Main(string[] args)
 		{
 			string outPath = null; // -o{FILE}, --descriptor_set_out={FILE}
@@ -149,40 +149,13 @@ namespace Json2Net
 				try
 				{
 					DynamicJsonObject dy = ConvertJson(text);
-					foreach (var ns in dy.Dictionary)
-					{
-						// namespace
-						if (!classValue.ContainsKey(ns.Key))
-							classValue.Add(ns.Key, new Dictionary<string, Dictionary<string, string>>());
-						else
-							throw new Exception(string.Format("namespace duplicate：{0}", ns.Key));
-						// class
-						var q = ns.Value as Dictionary<string, object>;
-						foreach (var cl in q)
-						{
-							if (!classValue[ns.Key].ContainsKey(cl.Key))
-								classValue[ns.Key].Add(cl.Key, new Dictionary<string, string>());
-							else
-								throw new Exception(string.Format("class duplicate：{0}", cl.Key));
-							var mem = cl.Value as Dictionary<string, object>;
-							// member
-							foreach (var m in mem)
-							{
-								//if (!classValue[ns.Key][cl.Key].ContainsKey(m.Key))
-									classValue[ns.Key][cl.Key].Add(m.Key, m.Value.ToString());
-								//else
-								//	throw new Exception(string.Format("member duplicate：{0}", m.Key));
-							}
-						}
-					}
+					CodeGenerate.CSharpCode(outPath + fileName, dy);
+					Console.WriteLine("JsonConvert2Net " + path + " => " + outPath + fileName + " Success");
 				}
 				catch (Exception e)
 				{
 					Console.WriteLine(e.ToString());
 				}
-				
-				CodeGenerate.CSharpCode(outPath + fileName, classValue);
-				Console.WriteLine("JsonConvert2Net " + path + " => " + outPath + fileName + " Success");
 			}
 			Console.ReadKey();
 		}

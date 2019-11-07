@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Web.Script.Serialization.CS;
 
 namespace Json2Net
 {
@@ -12,10 +13,11 @@ namespace Json2Net
 	class CodeGenerate
 	{
 		private static readonly string codeLanguage = "CSharp";
-		public static void CSharpCode(string pathName, Dictionary<string, Dictionary<string, Dictionary<string, string>>> code)
+
+		public static void CSharpCode(string pathName, DynamicJsonObject code)
 		{
 			// namespace
-			foreach (var ns in code)
+			foreach (var ns in code.Dictionary)
 			{
 				var compileUnit = new CodeCompileUnit();
 				var nameSpace = new CodeNamespace(ns.Key);
@@ -25,8 +27,8 @@ namespace Json2Net
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.Linq"));
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.Collections"));
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.Collections.Generic"));
-				
-				foreach (var cl in ns.Value)
+				var q = ns.Value as Dictionary<string, object>;
+				foreach (var cl in q)
 				{
 					// enum
 					if (cl.Key.StartsWith("enum"))
@@ -34,10 +36,11 @@ namespace Json2Net
 						var enumName = cl.Key.Split(' ');
 						if (enumName[0].Equals("enum"))
 						{
-							var generateEnum = new CodeTypeDeclaration(enumName[1]); 
+							var generateEnum = new CodeTypeDeclaration(enumName[1]);
 							nameSpace.Types.Add(generateEnum);
 							generateEnum.IsEnum = true;
-							foreach (var mem in cl.Value)
+							var m = cl.Value as Dictionary<string, object>;
+							foreach (var mem in m)
 							{
 								CodeMemberField m1 = new CodeMemberField();
 								m1.Name = mem.Key;
@@ -55,11 +58,12 @@ namespace Json2Net
 
 						nameSpace.Types.Add(generateClass);
 						// member
-						foreach (var mem in cl.Value)
+						var m = cl.Value as Dictionary<string, object>;
+						foreach (var mem in m)
 						{
 							var property = new CodeMemberProperty();
 							property.Name = mem.Key;
-							SetMemberType(property, mem.Value);
+							SetMemberType(property, mem.Value.ToString());
 							property.HasSet = true;
 							property.HasGet = true;
 							property.Attributes = MemberAttributes.Final | MemberAttributes.Public;
