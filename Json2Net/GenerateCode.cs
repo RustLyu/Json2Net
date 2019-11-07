@@ -26,15 +26,15 @@ namespace Json2Net
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.Collections"));
 				nameSpace.Imports.Add(new CodeNamespaceImport("System.Collections.Generic"));
 				
-				// class
 				foreach (var cl in ns.Value)
 				{
+					// enum
 					if (cl.Key.StartsWith("enum"))
 					{
 						var enumName = cl.Key.Split(' ');
 						if (enumName[0].Equals("enum"))
 						{
-							var generateEnum = new CodeTypeDeclaration(enumName[1]);
+							var generateEnum = new CodeTypeDeclaration(enumName[1]); 
 							nameSpace.Types.Add(generateEnum);
 							generateEnum.IsEnum = true;
 							foreach (var mem in cl.Value)
@@ -46,6 +46,7 @@ namespace Json2Net
 							}
 						}
 					}
+					// class
 					else
 					{
 						var generateClass = new CodeTypeDeclaration(cl.Key);
