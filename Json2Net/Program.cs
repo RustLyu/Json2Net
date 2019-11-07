@@ -146,33 +146,41 @@ namespace Json2Net
 			{
 				string text = File.ReadAllText(path);
 				var fileName = "\\" + path.Split('\\').Last().Split('.').First() + ".cs";
-				DynamicJsonObject dy = ConvertJson(text);
-				foreach (var ns in dy.Dictionary)
+				try
 				{
-					// namespace
-					if (!classValue.ContainsKey(ns.Key))
-						classValue.Add(ns.Key, new Dictionary<string, Dictionary<string, string>>());
-					else
-						throw new Exception(string.Format("namespace duplicate：{0}", ns.Key));
-					// class
-					var q = ns.Value as Dictionary<string, object>;
-					foreach (var cl in q)
+					DynamicJsonObject dy = ConvertJson(text);
+					foreach (var ns in dy.Dictionary)
 					{
-						if(!classValue[ns.Key].ContainsKey(cl.Key))
-							classValue[ns.Key].Add(cl.Key, new Dictionary<string, string>());
+						// namespace
+						if (!classValue.ContainsKey(ns.Key))
+							classValue.Add(ns.Key, new Dictionary<string, Dictionary<string, string>>());
 						else
-							throw new Exception(string.Format("class duplicate：{0}", cl.Key));
-						var mem = cl.Value as Dictionary<string, object>;
-						// member
-						foreach (var m in mem)
+							throw new Exception(string.Format("namespace duplicate：{0}", ns.Key));
+						// class
+						var q = ns.Value as Dictionary<string, object>;
+						foreach (var cl in q)
 						{
-							if(!classValue[ns.Key][cl.Key].ContainsKey(m.Key))
-								classValue[ns.Key][cl.Key].Add(m.Key, m.Value.ToString());
+							if (!classValue[ns.Key].ContainsKey(cl.Key))
+								classValue[ns.Key].Add(cl.Key, new Dictionary<string, string>());
 							else
-								throw new Exception(string.Format("member duplicate：{0}", m.Key));
+								throw new Exception(string.Format("class duplicate：{0}", cl.Key));
+							var mem = cl.Value as Dictionary<string, object>;
+							// member
+							foreach (var m in mem)
+							{
+								if (!classValue[ns.Key][cl.Key].ContainsKey(m.Key))
+									classValue[ns.Key][cl.Key].Add(m.Key, m.Value.ToString());
+								else
+									throw new Exception(string.Format("member duplicate：{0}", m.Key));
+							}
 						}
 					}
 				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.ToString());
+				}
+				
 				CodeGenerate.CSharpCode(outPath + fileName, classValue);
 				Console.WriteLine("JsonConvert2Net " + path + " => " + outPath + fileName + " Success");
 			}
