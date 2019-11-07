@@ -168,10 +168,10 @@ namespace Json2Net
 							// member
 							foreach (var m in mem)
 							{
-								if (!classValue[ns.Key][cl.Key].ContainsKey(m.Key))
+								//if (!classValue[ns.Key][cl.Key].ContainsKey(m.Key))
 									classValue[ns.Key][cl.Key].Add(m.Key, m.Value.ToString());
-								else
-									throw new Exception(string.Format("member duplicate：{0}", m.Key));
+								//else
+								//	throw new Exception(string.Format("member duplicate：{0}", m.Key));
 							}
 						}
 					}

@@ -58,8 +58,8 @@ namespace Json2Net
 						foreach (var mem in cl.Value)
 						{
 							var property = new CodeMemberProperty();
-							property.Name = mem.Value;
-							SetMemberType(property, mem.Key);
+							property.Name = mem.Key;
+							SetMemberType(property, mem.Value);
 							property.HasSet = true;
 							property.HasGet = true;
 							property.Attributes = MemberAttributes.Final | MemberAttributes.Public;
